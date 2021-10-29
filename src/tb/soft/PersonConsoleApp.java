@@ -2,220 +2,207 @@ package tb.soft;
 
 import java.util.Arrays;
 
-/**
- * Program: Aplikacja działająca w oknie konsoli, która umożliwia testowanie 
- *          operacji wykonywanych na obiektach klasy Person.
- *    Plik: PersonConsoleApp.java
- *          
- *   Autor: Paweł Rogaliński
- *    Data: październik 2018 r.
- */
 public class PersonConsoleApp {
 
-	private static final String GREETING_MESSAGE = 
-			"Program Person - wersja konsolowa\n" + 
-	        "Autor: Paweł Rogaliński\n" +
-			"Data:  październik 2018 r.\n";
+	private static final String GREETING_MESSAGE =
+			"Program Person - wersja konsolowa\n";
 
-	private static final String MENU = 
-			"    M E N U   G Ł Ó W N E  \n" +
-			"1 - Podaj dane nowej osoby \n" +
-			"2 - Usuń dane osoby        \n" +
-			"3 - Modyfikuj dane osoby   \n" +
-			"4 - Wczytaj dane z pliku   \n" +
-			"5 - Zapisz dane do pliku   \n" +
-			"0 - Zakończ program        \n";	
-	
-	private static final String CHANGE_MENU = 
-			"   Co zmienić?     \n" + 
-	        "1 - Imię           \n" + 
-			"2 - Nazwisko       \n" + 
-	        "3 - Rok urodzenia  \n" + 
-			"4 - Stanowisko     \n" +
-	        "0 - Powrót do menu głównego\n";
+	private static final String MENU =
+			"M E N U   G Ł Ó W N E				\n\n" +
+					"Wybierz rodzaj kolekcji: 	\n" +
+					"1 - SET 					\n" +
+					"2 - LIST					\n" +
+					"3 - MAP					\n";
 
-	
-	/**
-	 * ConsoleUserDialog to pomocnicza klasa zawierająca zestaw
-	 * prostych metod do realizacji dialogu z użytkownikiem
-	 * w oknie konsoli tekstowej.
-	 */
+	private static final String SetMenu =
+			"S E T   M E N U					\n" +
+					"1 - Dodaj do TreeSet		\n" +
+					"2 - Usuń z TreeSet			\n" +
+					"3 - Wyświetl TreeSet		\n" +
+					"4 - Dodaj do HashSet		\n" +
+					"5 - Usuń z HashSet			\n" +
+					"6 - Wyświetl HashSet		\n" +
+					"0 - Zakończ program		\n";
+	private static final String ListMenu =
+			"L I S T   M E N U					\n" +
+					"1 - Dodaj do ArrayList		\n" +
+					"2 - Usuń z ArrayList		\n" +
+					"3 - Wyświetl ArrayList		\n" +
+					"4 - Dodaj do LinkedList	\n" +
+					"5 - Usuń z LinkedList		\n" +
+					"6 - Wyświetl LinkedList		\n" +
+					"0 - Zakończ program		\n";
+	private static final String MapMenu =
+			"M A P   M E N U					\n" +
+					"1 - Dodaj do TreeMap		\n" +
+					"2 - Usuń z TreeMap			\n" +
+					"3 - Wyświetl TreeMap		\n" +
+					"4 - Dodaj do HashMap		\n" +
+					"5 - Usuń z HashMap			\n" +
+					"6 - Wyświetl HashMap		\n" +
+					"0 - Zakończ program		\n";
+
+
+
 	private static final ConsoleUserDialog UI = new ConsoleUserDialog();
-	
-	
-	public static void main(String[] args) {
-		// Utworzenie obiektu aplikacji konsolowej
-		// oraz uruchomienie głównej pętli aplikacji.
+
+
+	public static void main(String[] args) throws PersonException{
 		PersonConsoleApp application = new PersonConsoleApp();
 		application.runMainLoop();
-	} 
+	}
 
-	
-	/*
-	 *  Referencja do obiektu, który zawiera dane aktualnej osoby.
-	 */
+
+
 	private Person currentPerson = null;
-	
-	
-	/*
-	 *  Metoda runMainLoop wykonuje główną pętlę aplikacji.
-	 *  UWAGA: Ta metoda zawiera nieskończoną pętlę,
-	 *         w której program się zatrzymuje aż do zakończenia
-	 *         działania za pomocą metody System.exit(0); 
-	 */
-	public void runMainLoop() {
+
+
+	public void runMainLoop() throws PersonException{
+		Set set = new Set();
+		List list = new List();
+		Map map = new Map();
+		int HashIndex = 1;
+		int TreeIndex = 1;
+
 		UI.printMessage(GREETING_MESSAGE);
 
 		while (true) {
 			UI.clearConsole();
-			showCurrentPerson();
 
-			try {
-				switch (UI.enterInt(MENU + "==>> ")) {
+
+			switch (UI.enterInt(MENU + "==>> ")) {
 				case 1:
-					// utworzenie nowej osoby
-					currentPerson = createNewPerson();
-					break;
+					switch (UI.enterInt(SetMenu + "(SET)==>> ")) {
+						case 1:
+							int equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							set.TreeSetAdd(currentPerson);
+							break;
+						case 2:
+							equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							set.TreeSetRemove(currentPerson);
+							break;
+						case 3:
+							set.TreeSetPrint();
+							break;
+						case 4:
+							equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							set.HashSetAdd(currentPerson);
+							break;
+						case 5:
+							equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							set.HashSetRemove(currentPerson);
+							break;
+						case 6:
+							set.HashSetPrint();
+							break;
+						case 0:
+							UI.printInfoMessage("\nProgram zakończył działanie!");
+							System.exit(0);
+					} break;
 				case 2:
-					// usunięcie danych aktualnej osoby.
-					currentPerson = null;
-					UI.printInfoMessage("Dane aktualnej osoby zostały usunięte");
-					break;
+					switch (UI.enterInt(ListMenu + "(LIST)==>> ")) {
+						case 1:
+							int equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							list.ArrayListAdd(currentPerson);
+							break;
+						case 2:
+							int ArrayListIndex = UI.enterInt("Podaj pozycję do usunięcia z ArrayList ==>> ");
+							list.ArrayListRemove(ArrayListIndex);
+							break;
+						case 3:
+							list.ArrayListPrint();
+							break;
+						case 4:
+							equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							list.ShowLinkedListSize();
+							int LinkedListIndex = UI.enterInt("==>> ");
+							currentPerson = createNewPerson(equal);
+							list.LinkedListAdd(LinkedListIndex, currentPerson);
+							break;
+						case 5:
+							int LinkedListIndex2 = UI.enterInt("Podaj pozycję do usunięcia z LinkedList ==>> ");
+							list.LinkedListRemove(LinkedListIndex2);
+							break;
+						case 6:
+							list.LinkedListPrint();
+							break;
+						case 0:
+							UI.printInfoMessage("\nProgram zakończył działanie!");
+							System.exit(0);
+					} break;
 				case 3:
-					// zmiana danych dla aktualnej osoby
-					if (currentPerson == null) throw new PersonException("Żadna osoba nie została utworzona.");
-					changePersonData(currentPerson);
-					break;
-				case 4: {
-					// odczyt danych z pliku tekstowego.
-					String file_name = UI.enterString("Podaj nazwę pliku: ");
-					currentPerson = Person.readFromFile(file_name);
-					UI.printInfoMessage("Dane aktualnej osoby zostały wczytane z pliku " + file_name);
-				}
-					break;
-				case 5: {
-					// zapis danych aktualnej osoby do pliku tekstowego 
-					String file_name = UI.enterString("Podaj nazwę pliku: ");
-					Person.printToFile(file_name, currentPerson);
-					UI.printInfoMessage("Dane aktualnej osoby zostały zapisane do pliku " + file_name);
-				}
+					switch (UI.enterInt(MapMenu + "(MAP)==>> ")) {
+						case 1:
+							int equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							map.TreeMapAdd(TreeIndex,currentPerson);
+							TreeIndex++;
+							break;
+						case 2:
+							int key = UI.enterInt("Podaj klucz (indeks) do usunięcia ==>> ");
+							map.TreeMapRemove(key);
+							break;
+						case 3:
+							map.TreeMapPrint();
+							break;
+						case 4:
+							equal = UI.enterInt("Czy chcesz użyć funkcji equals? Tak - 1, Nie - 0 ==>>  ");
+							currentPerson = createNewPerson(equal);
+							map.HashMapAdd(HashIndex,currentPerson);
+							HashIndex++;
+							break;
+						case 5:
+							int HashKey = UI.enterInt("Podaj klucz (indeks) do usunięcia ==>> ");
+							map.HashMapRemove(HashKey);
+							break;
+						case 6:
+							map.HashMapPrint();
+							break;
+						case 0:
+							UI.printInfoMessage("\nProgram zakończył działanie!");
+							System.exit(0);
+					}
 
-					break;
-				case 0:
-					// zakończenie działania programu
-					UI.printInfoMessage("\nProgram zakończył działanie!");
-					System.exit(0);
-				} // koniec instrukcji switch
-			} catch (PersonException e) { 
-				// Tu są wychwytywane wyjątki zgłaszane przez metody klasy Person,
-				// gdy nie są spełnione ograniczenia nałożone na dopuszczalne wartości
-				// poszczególnych atrybutów.
-				// Drukowanie komunikatu o błędzie zgłoszonym za pomocą wyjątku PersonException.
-				UI.printErrorMessage(e.getMessage());
+
 			}
-		} // koniec pętli while
+		}
 	}
-	
-	
-	/*
-	 *  Metoda wyświetla w oknie konsoli dane aktualnej osoby 
-	 *  pamiętanej w zmiennej currentPerson.
-	 */
-	void showCurrentPerson() {
-		showPerson(currentPerson);
-	} 
 
-	
-	/* 
-	 * Metoda wyświetla w oknie konsoli dane osoby reprezentowanej 
-	 * przez obiekt klasy Person
-	 */ 
 	static void showPerson(Person person) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		if (person != null) {
 			sb.append("Aktualna osoba: \n")
-			  .append("      Imię: ").append(person.getFirstName()).append("\n")
-			  .append("  Nazwisko: ").append(person.getLastName()).append("\n")
-			  .append("   Rok ur.: ").append(person.getBirthYear()).append("\n")
-			  .append("Stanowisko: ").append(person.getJob()).append("\n");
+					.append("      Imię: ").append(person.getFirstName()).append("\n")
+					.append("  Nazwisko: ").append(person.getLastName()).append("\n")
+					.append("   Rok ur.: ").append(person.getBirthYear()).append("\n")
+					.append("Stanowisko: ").append(person.getJob()).append("\n");
 		} else
-			sb.append( "Brak danych osoby\n" );
-		UI.printMessage( sb.toString() );
+			sb.append("Brak danych osoby\n");
+		UI.printMessage(sb.toString());
 	}
 
-	
-	/* 
-	 * Metoda wczytuje w konsoli dane nowej osoby, tworzy nowy obiekt
-	 * klasy Person i wypełnia atrybuty wczytanymi danymi.
-	 * Walidacja poprawności danych odbywa się w konstruktorze i setterach
-	 * klasy Person. Jeśli zostaną wykryte niepoprawne dane,
-	 * to zostanie zgłoszony wyjątek, który zawiera komunikat o błędzie.
-	 */
-	static Person createNewPerson(){
+	static Person createNewPerson(int equal) {
 		String first_name = UI.enterString("Podaj imię: ");
 		String last_name = UI.enterString("Podaj nazwisko: ");
 		String birth_year = UI.enterString("Podaj rok ur.: ");
 		UI.printMessage("Dozwolone stanowiska:" + Arrays.deepToString(PersonJob.values()));
 		String job_name = UI.enterString("Podaj stanowisko: ");
 		Person person;
-		try { 
-			// Utworzenie nowego obiektu klasy Person oraz
-			// ustawienie wartości wszystkich atrybutów.
+		try {
 			person = new Person(first_name, last_name);
 			person.setBirthYear(birth_year);
 			person.setJob(job_name);
-		} catch (PersonException e) {    
-			// Tu są wychwytywane wyjątki zgłaszane przez metody klasy Person,
-			// gdy nie są spełnione ograniczenia nałożone na dopuszczalne wartości
-			// poszczególnych atrybutów.
-			// Drukowanie komunikatu o błędzie zgłoszonym za pomocą wyjątku PersonException.
+		} catch (PersonException e) {
 			UI.printErrorMessage(e.getMessage());
 			return null;
 		}
 		return person;
 	}
-	
-	
-	/* 
-	 * Metoda pozwala wczytać nowe dane dla poszczególnych atrybutów 
-	 * obiekty person i zmienia je poprzez wywołanie odpowiednich setterów z klasy Person.
-	 * Walidacja poprawności wczytanych danych odbywa się w setterach
-	 * klasy Person. Jeśli zostaną wykryte niepoprawne dane,
-	 * to zostanie zgłoszony wyjątek, który zawiera komunikat o błędzie.
-	 */
-	static void changePersonData(Person person)
-	{
-		while (true) {
-			UI.clearConsole();
-			showPerson(person);
 
-			try {		
-				switch (UI.enterInt(CHANGE_MENU + "==>> ")) {
-				case 1:
-					person.setFirstName(UI.enterString("Podaj imię: "));
-					break;
-				case 2:
-					person.setLastName(UI.enterString("Podaj nazwisko: "));
-					break;
-				case 3:
-					person.setBirthYear(UI.enterString("Podaj rok ur.: "));
-					break;
-				case 4:
-					UI.printMessage("Dozwolone stanowiska:" + Arrays.deepToString(PersonJob.values()));
-					person.setJob(UI.enterString("Podaj stanowisko: "));
-					break;
-				case 0: return;
-				}  // koniec instrukcji switch
-			} catch (PersonException e) {     
-				// Tu są wychwytywane wyjątki zgłaszane przez metody klasy Person,
-				// gdy nie są spełnione ograniczenia nałożone na dopuszczalne wartości
-				// poszczególnych atrybutów.
-				// Drukowanie komunikatu o błędzie zgłoszonym za pomocą wyjątku PersonException.
-				UI.printErrorMessage(e.getMessage());
-			}
-		}
-	}
-	
-	
-}  // koniec klasy PersonConsoleApp
+}

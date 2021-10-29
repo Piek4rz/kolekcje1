@@ -6,27 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Objects;
 
 
-/*
- *  Program: Operacje na obiektach klasy Person
- *     Plik: Person.java
- *           definicja typu wyliczeniowego Job
- *           definicja klasy PersonException
- *           definicja publicznej klasy Person
- *
- *    Autor: Paweł Rogaliński
- *     Data:  październik 2018 r.
- */
-
-
-/**
- *  Typ wyliczeniowy PersonJob reprezentuje przykładowe stanowiska, 
- *  które może zajmować osoba. Klasa została zaimplementowana
- *  tak, by mogła być rozszerzana o dodatkowe stanowiska.
- *  W tym celu wystarczy do zdefiniowanej listy dodać kolejne
- *  wywołanie konstruktora. 
- */
 enum PersonJob {
 	UNKNOWN("-------"), 
 	GUEST("Gość"), 
@@ -47,13 +31,9 @@ enum PersonJob {
 		return jobName;
 	}
 	
-}  // koniec klasy enum Job
+}
 
 
-/**
- * Klasa PersonException jest klasą wyjątków służącą do zgłaszania błędów
- * występujących przy operacjach na obiektach klasy Person.
- */
 class PersonException extends Exception {
 
 	private static final long serialVersionUID = 1L;
@@ -62,35 +42,21 @@ class PersonException extends Exception {
 		super(message);
 	}
 	
-} // koniec klasy PersonException
+}
 
-
-/**
- * Klasa Person reprezentuje osoby, które są opisane za pomocą
- * czterech atrybutów: imię, nazwisko, rok urodzenia, stanowisko.
- * W klasie przyjęto ograniczenia:
- *   - pola firstName oraz lastName muszą zawierać niepusty ciąg znaków
- *   - pole birthYear musi zawierać liczbę z przedziału [1900-2030]
- *     lub 0 (0 oznacza niezdefiniowany rok urodzenia).
- *   - pole job musi zawierać wyłącznie jedną z pozycji zdefiniowanych
- *     w typie wyliczeniowym enum PersonJob.
- *
- * Powyższe ograniczenia są kontrolowane i w przypadku próby nadania
- * niedozwolonej wartości, któremuś z atrybutów jest zgłaszany wyjątek
- * zawierający stosowny komunikat.
- */
 public class Person {
 	
 	private String firstName;
 	private String lastName;
 	private int birthYear;
 	private PersonJob job;
- 
+ 	int equal;
 	
 	public Person(String first_name, String last_name) throws PersonException {
 		setFirstName(first_name);
 		setLastName(last_name);
 		job = PersonJob.UNKNOWN;
+		equal = 0;
 	}
 
 	
@@ -212,5 +178,29 @@ public class Person {
 			throw new PersonException("Wystąpił błąd podczas odczytu danych z pliku.");
 		}	
 	}
-	
-}  // koniec klasy Person
+	static class Compare implements Comparator<Person>
+	{
+		public int compare(Person p1, Person p2)
+		{
+			return p1.getFirstName().compareTo(p2.getFirstName());
+		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (equal == 1) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Person person = (Person) o;
+			return birthYear == person.birthYear && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && job == person.job;
+		}
+		else{
+			return false;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, lastName, birthYear, job);
+	}
+}
