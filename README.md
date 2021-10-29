@@ -1,4 +1,4 @@
-# kolekcje
+# kolekcje Piekarski Jakub 259063
 parę przykładowych klas do użycia w kolekcjach
 
 klasa Person - dane do trzymania w kolekcji
